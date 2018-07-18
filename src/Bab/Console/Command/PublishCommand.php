@@ -64,7 +64,7 @@ class PublishCommand extends Command
      */
     protected function publishWithLib($nbMessages)
     {
-        $connection = new AMQPConnection('123.206.231.149', 5672, 'guest', 'guest', '/');
+        $connection = new AMQPConnection('127.0.01', 5672, 'guest', 'guest', '/');
         $channel = $connection->channel();
 
         for ($i = 0; $i < $nbMessages; $i++) {
