@@ -16,7 +16,7 @@ class Amqp{
     public $queue;
 
     public $config = [
-                    'host' => '123.206.231.149',
+                    'host' => '127.0.0.1',
                     'port' => '5672',
                     'login' => 'guest',
                     'password' => 'guest',
