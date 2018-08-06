@@ -149,6 +149,9 @@ class AmqpExt{
         $this->connection->disconnect();
     }
 
+    /**
+     * consume方式接收消息
+     */
     public function consume()
     {
         $channle = $this->setChannle();
@@ -156,8 +159,22 @@ class AmqpExt{
         $queue = $this->setQueue($channle, $exchange, $this->deadQueueConfig);
         $msg = $queue->consume(function($msg) use ($queue){
             $queue->ack($msg->getDeliveryTag());
-            var_dump($msg->getBody());
+            echo date("Y-m-d H:i:s")."---".$msg->getBody().PHP_EOL;
         });
     }
+
+    /**
+     * get的方式接收消息
+     */
+    public function get()
+    {
+        $channle = $this->setChannle();
+        $exchange = $this->setExchange($channle, $this->deadLetterExchangeConfig);
+        $queue = $this->setQueue($channle, $exchange, $this->deadQueueConfig);
+        $msg = $queue->get(AMQP_AUTOACK);
+        echo date("Y-m-d H:i:s")."---".$msg->getBody().PHP_EOL;
+    }
+
+    
 
 }
