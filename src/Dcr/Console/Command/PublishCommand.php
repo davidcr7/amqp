@@ -12,7 +12,7 @@ use Swarrot\Consumer;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Bab\Swarrot\Processor\DumbProcessor;
-use Bab\Console\Command\AmqpExt;
+use Dcr\Console\Command\AmqpExt;
 
 class PublishCommand extends Command
 {
@@ -52,7 +52,7 @@ class PublishCommand extends Command
      */
     protected function publishWithExt($nbMessages)
     {
-        (new Amqp())->publish("message", $nbMessages);
+        (new AmqpExt())->publish("message", $nbMessages);
     }
 
     /**

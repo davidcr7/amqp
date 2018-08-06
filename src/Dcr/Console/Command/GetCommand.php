@@ -34,15 +34,16 @@ class GetCommand extends Command
         $provider = $input->getArgument('provider');
 
         if ('ext' === $provider) {
-            $connection = new \AMQPConnection([
-                'vhost' => 'bench'
-            ]);
-            $connection->connect();
-            $channel = new \AMQPChannel($connection);
-            $queue = new \AMQPQueue($channel);
-            $queue->setName('bench');
+            // $connection = new \AMQPConnection([
+            //     'vhost' => 'bench'
+            // ]);
+            // $connection->connect();
+            // $channel = new \AMQPChannel($connection);
+            // $queue = new \AMQPQueue($channel);
+            // $queue->setName('bench');
 
-            $messageProvider = new PeclPackageMessageProvider($queue);
+            // $messageProvider = new PeclPackageMessageProvider($queue);
+            (new AmqpExt())->consume();
         } else {
             $connection = new AMQPConnection('127.0.0.1', 5672, 'guest', 'guest', 'bench');
             $messageProvider = new PhpAmqpLibMessageProvider($connection->channel(), 'bench');

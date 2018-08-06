@@ -1,7 +1,7 @@
 <?php
 namespace Dcr\Console\Command;
 
-class Amqp{
+class AmqpExt{
     
     public $connection;
 
@@ -15,33 +15,36 @@ class Amqp{
 
     public $queue;
 
-    public $config = [
-                    'host' => '123.206.231.149',
-                    'port' => '5672',
-                    'login' => 'guest',
-                    'password' => 'guest',
-                    ];
+    public $config;
 
     public function __construct()
     {
+        $this->config = CONFIG;
+    
+        $this->deadLetterExchangeConfig= [
+                                            'name' => "davidcr.test.delay",
+                                            'type' => AMQP_EX_TYPE_DIRECT
+                                        ];
 
-        $this->deadLetterExchangeConfig= ['name' => "davidcr.test.delay", 'type' => AMQP_EX_TYPE_DIRECT];
-
-        $this->deadQueueConfig = ['name' => "davidcr.delay",
+        $this->deadQueueConfig = [
+                                  'name' => "davidcr.delay",
                                   'type' => AMQP_EX_TYPE_DIRECT,
                                   'routing_key' => "davidcr.delay.routing_key",
                                   'property' => []
                                 ];
 
-        $this->exchangeConfig = ['name' => "davidcr.test", 'type' => AMQP_EX_TYPE_DIRECT];
+        $this->exchangeConfig = [
+                                    'name' => "davidcr.test",
+                                    'type' => AMQP_EX_TYPE_DIRECT];
 
-        $this->queueConfig = ['name' => "davidcr.test",
-                              'type' => AMQP_EX_TYPE_DIRECT,
-                              'routing_key' => "davidcr.routing_key",
-                              'property' => [
-                                    'x-dead-letter-exchange' => $this->deadLetterExchangeConfig['name'],
-                                    'x-dead-letter-routing-key' => $this->deadQueueConfig['routing_key'],
-                              ]
+        $this->queueConfig = [
+                                'name' => "davidcr.test",
+                                'type' => AMQP_EX_TYPE_DIRECT,
+                                'routing_key' => "davidcr.routing_key",
+                                'property' => [
+                                                    'x-dead-letter-exchange' => $this->deadLetterExchangeConfig['name'],
+                                                    'x-dead-letter-routing-key' => $this->deadQueueConfig['routing_key'],
+                            ]
         ];
 
 
@@ -55,11 +58,17 @@ class Amqp{
 
     }
 
+    /**
+     * 创建信道
+     */
     public function setChannle():\AMQPChannel
     {
         return new \AMQPChannel($this->connection);
     }
 
+    /**
+     * 创建交换器
+     */
     public function setExchange(\AMQPChannel $channel, $exchangeConfig):\AMQPExchange
     {
         $exchange = new \AMQPExchange($channel);
@@ -75,6 +84,9 @@ class Amqp{
         return $exchange;
     }
 
+    /**
+     * 创建队列
+     */
     public function setQueue(\AMQPChannel $channle, \AMQPExchange $exchange, $queueConfig):\AMQPQueue
     {
         $queue = new \AMQPQueue($channle);
@@ -94,6 +106,9 @@ class Amqp{
         return $queue;
     }
 
+    /**
+     * 创建延迟队列
+     */
     public function delayQueue():\AMQPExchange
     {
         //声明信道
@@ -106,20 +121,23 @@ class Amqp{
         //生产者队列
         $exchange = $this->setExchange($channle, $this->exchangeConfig);
         $this->setQueue($channle, $exchange, $this->queueConfig);
-
+        
         return $exchange;
     }
 
+    /**
+     * 发布消息
+     */
     public function publish($msg, $nbMessages)
     {
         $exchange = $this->delayQueue();
         $channle = $this->setChannle();
-        $channle->confirmSelect();
-//        $channle->setConfirmCallback(function(){
-//            echo "消息发送成功\r\n";
-//        },function(){
-//            echo "消息发送失败\r\n";
-//        });
+        // $channle->confirmSelect();
+        // $channle->setConfirmCallback(function(){
+        //     echo "消息发送成功\r\n";
+        // },function(){
+        //     echo "消息发送失败\r\n";
+        // });
         for ($i = 0; $i < $nbMessages; $i++) {
             $exchange->publish($msg.$i, $this->queueConfig['routing_key'], AMQP_DURABLE, ['expiration' => 2000]);
 
@@ -129,6 +147,17 @@ class Amqp{
         }
 
         $this->connection->disconnect();
+    }
+
+    public function consume()
+    {
+        $channle = $this->setChannle();
+        $exchange = $this->setExchange($channle, $this->deadLetterExchangeConfig);
+        $queue = $this->setQueue($channle, $exchange, $this->deadQueueConfig);
+        $msg = $queue->consume(function($msg) use ($queue){
+            $queue->ack($msg->getDeliveryTag());
+            var_dump($msg->getBody());
+        });
     }
 
 }

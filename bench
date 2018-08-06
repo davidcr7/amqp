@@ -3,6 +3,10 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/config/config.php';
+
+define("CONFIG",$config);
+
 
 use Symfony\Component\Console\Application;
 use Dcr\Console\Command\GetCommand;
