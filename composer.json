@@ -1,14 +1,6 @@
 {
     "name": "odolbeau/php-amqp-bench",
     "description": "Simple benchs to test php-amqp lib & extension",
-    "keywords": ["bench","worker","amqp"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Olivier Dolbeau",
-            "homepage": "http://odolbeau.fr/"
-        }
-    ],
     "require": {
         "php": ">=5.4",
         "ext-amqp": "*",
@@ -18,7 +10,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Bab": "src"
+            "Dcr": "src"
         }
     },
     "repositories": {

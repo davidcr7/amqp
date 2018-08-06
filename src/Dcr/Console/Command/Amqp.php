@@ -1,5 +1,5 @@
 <?php
-namespace Bab\Console\Command;
+namespace Dcr\Console\Command;
 
 class Amqp{
     
@@ -16,7 +16,7 @@ class Amqp{
     public $queue;
 
     public $config = [
-                    'host' => '127.0.0.1',
+                    'host' => '123.206.231.149',
                     'port' => '5672',
                     'login' => 'guest',
                     'password' => 'guest',
@@ -123,9 +123,9 @@ class Amqp{
         for ($i = 0; $i < $nbMessages; $i++) {
             $exchange->publish($msg.$i, $this->queueConfig['routing_key'], AMQP_DURABLE, ['expiration' => 2000]);
 
-            if($channle->waitForConfirm()){
-                echo "ooooooooooooook!";
-            }
+            // if($channle->waitForConfirm()){
+            //     echo "ooooooooooooook!";
+            // }
         }
 
         $this->connection->disconnect();

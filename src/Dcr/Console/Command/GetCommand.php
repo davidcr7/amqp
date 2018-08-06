@@ -1,6 +1,5 @@
 <?php
-
-namespace Bab\Console\Command;
+namespace Dcr\Console\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,7 +9,7 @@ use Swarrot\Broker\MessageProvider\PeclPackageMessageProvider;
 use Swarrot\Broker\MessageProvider\PhpAmqpLibMessageProvider;
 use Swarrot\Consumer;
 use PhpAmqpLib\Connection\AMQPConnection;
-use Bab\Swarrot\Processor\DumbProcessor;
+use Dcr\Swarrot\Processor\DumbProcessor;
 
 class GetCommand extends Command
 {

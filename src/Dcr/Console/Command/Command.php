@@ -1,6 +1,6 @@
 <?php
 
-namespace Bab\Console\Command;
+namespace Dcr\Console\Command;
 
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
